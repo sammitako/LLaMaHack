@@ -1,10 +1,18 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const OpenAI = require("openai");
-const cors = require("cors");
-const axios = require("axios");
+// const express = require("express");
+// const bodyParser = require("body-parser");
+// const OpenAI = require("openai");
+// const cors = require("cors");
+// const axios = require("axios");
 
-require("dotenv").config();
+import express from "express";
+import bodyParser from "body-parser";
+import OpenAI from "openai";
+import cors from "cors";
+import axios from "axios";
+import * as dotenv from "dotenv";
+import { URL } from "url";
+
+dotenv.config();
 
 const app = express();
 const port = 3000;
@@ -106,7 +114,7 @@ app.get("/api/evaluateImage", async (req, res) => {
 
   console.log("eval image");
 
-  foodItems = await getIngredientsListFromGPT4(
+  let foodItems = await getIngredientsListFromGPT4(
     "https://www.eatthis.com/wp-content/uploads/sites/4/2019/11/thanksgiving-turkey-dinner-plate.jpg?quality=82&strip=1"
   );
 
@@ -116,7 +124,7 @@ app.get("/api/evaluateImage", async (req, res) => {
   foodItems = foodItems.replace(/\n/g, "").split("- ").filter(Boolean);
 
   //   const foodItems = ["3 oz turkey"];
-  nutritionData = getNutritionData(foodItems);
+  const nutritionData = getNutritionData(foodItems);
 
   res.json(foodItems);
 });
