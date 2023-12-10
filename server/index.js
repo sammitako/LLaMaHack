@@ -1,16 +1,10 @@
-// const express = require("express");
-// const bodyParser = require("body-parser");
-// const OpenAI = require("openai");
-// const cors = require("cors");
-// const axios = require("axios");
-
 import express from "express";
 import bodyParser from "body-parser";
 import OpenAI from "openai";
 import cors from "cors";
 import axios from "axios";
 import * as dotenv from "dotenv";
-import { URL } from "url";
+import { connectToMongo } from "./db.js";
 
 dotenv.config();
 
@@ -22,6 +16,8 @@ const openai = new OpenAI({ apiKey: process.env.OPEN_AI_KEY });
 
 // Middleware to parse JSON data from requests
 app.use(bodyParser.json());
+
+connectToMongo().catch((err) => console.log(err));
 
 // Placeholder data (you can replace this with a database or any other data source)
 let data = [
