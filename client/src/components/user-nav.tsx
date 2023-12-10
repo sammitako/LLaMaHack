@@ -22,7 +22,6 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useState } from "react";
-import { Checkbox } from "./ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -31,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 export function UserNav() {
   const [open, setOpen] = useState(false);
@@ -74,20 +74,16 @@ export function UserNav() {
               <div className="grid gap-4 py-4">
                 <div className="grid gap-3">
                   <Label htmlFor="gender">Gender</Label>
-                  <div className="space-y-2">
+                  <RadioGroup defaultValue="female">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="female" />
-                      <Label className="font-normal" htmlFor="female">
-                        Female
-                      </Label>
+                      <RadioGroupItem value="female" id="r1" />
+                      <Label htmlFor="r1">Female</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="male" />
-                      <Label className="font-normal" htmlFor="male">
-                        Male
-                      </Label>
+                      <RadioGroupItem value="male" id="r2" />
+                      <Label htmlFor="r2">Male</Label>
                     </div>
-                  </div>
+                  </RadioGroup>
                 </div>
                 <div className="grid gap-3">
                   <Label htmlFor="description">Age</Label>
