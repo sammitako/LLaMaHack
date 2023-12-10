@@ -11,16 +11,16 @@ export function MainNav({
       {...props}
     >
       <Link
-        to="/dashboard"
+        to="/upload"
         className="text-sm font-medium transition-colors hover:text-primary"
       >
-        Dashboard
+        Upload
       </Link>
       <Link
-        to="/report"
+        to="/dashboard"
         className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
       >
-        Report
+        Dashboard
       </Link>
     </nav>
   );
