@@ -14,6 +14,7 @@ import {
 import { CalendarDateRangePicker } from "@/components/date-range-picker";
 import { Overview } from "@/components/overview";
 import { NutritionFacts } from "@/components/nutrition-facts";
+import NutritionCards from "@/components/nutrition-cards";
 
 function Dashboard() {
   return (
@@ -44,42 +45,7 @@ function Dashboard() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Fat</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">0g</div>
-                <p className="text-xs text-muted-foreground">-30g for today</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Carbs</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">50g</div>
-                <p className="text-xs text-muted-foreground">+180g for today</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Fiber</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">12g</div>
-                <p className="text-xs text-muted-foreground">-500g for today</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Protein</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">573</div>
-                <p className="text-xs text-muted-foreground">+201g for today</p>
-              </CardContent>
-            </Card>
+            <NutritionCards />
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             <Card className="col-span-4 ">

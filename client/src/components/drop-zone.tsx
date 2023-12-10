@@ -5,10 +5,12 @@ import { FilePlusIcon } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
 import Spinner from "./spinner";
 import { cn } from "@/lib/utils";
+// import axios from "axios";
 
 interface DropzoneProps {
   onChange: (fileUrls: string[]) => void;
   className?: string;
+  isAnalyzing: boolean;
   setIsAnalyzing: React.Dispatch<React.SetStateAction<boolean>>;
   fileExtensions?: string[];
 }
@@ -20,11 +22,11 @@ interface FileWithPreview extends File {
 export function Dropzone({
   onChange,
   className,
+  isAnalyzing,
   setIsAnalyzing,
   fileExtensions = ["png", "jpg"],
 }: DropzoneProps) {
   const [files, setFiles] = useState<FileWithPreview[]>([]);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Create an accept object for useDropzone
   const accept: Accept = fileExtensions.reduce((acc, ext) => {
@@ -40,6 +42,7 @@ export function Dropzone({
         preview: URL.createObjectURL(file),
       }));
       setFiles(mappedFiles);
+      console.log(mappedFiles);
       onChange(mappedFiles.map((f) => f.preview));
     },
   });
@@ -63,9 +66,17 @@ export function Dropzone({
     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
   }, [files]);
 
-  const submitHandler = () => {
-    setIsSubmitted(true);
-    setIsAnalyzing(false);
+  const submitHandler = (f: FileWithPreview[]) => {
+    setIsAnalyzing(true);
+    // axios
+    //   .post("http://your-node-server/upload", { f })
+    //   .then((response) => {
+    //     console.log(response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
+    console.log(f);
   };
 
   return (
@@ -77,19 +88,19 @@ export function Dropzone({
           {...getRootProps({
             className: cn(
               "flex flex-col items-center justify-center text-xs p-0",
-              isSubmitted && "dropzone-disabled"
+              isAnalyzing && "dropzone-disabled"
             ),
-            disabled: isSubmitted,
-            onClick: isSubmitted ? (e) => e.preventDefault() : undefined,
-            onDrop: isSubmitted ? (e) => e.preventDefault() : undefined,
+            disabled: isAnalyzing,
+            onClick: isAnalyzing ? (e) => e.preventDefault() : undefined,
+            onDrop: isAnalyzing ? (e) => e.preventDefault() : undefined,
           })}
         >
-          <input {...getInputProps()} disabled={isSubmitted} />
+          <input {...getInputProps()} disabled={isAnalyzing} />
           {files.length > 0 ? (
             <aside
               className={cn(
                 "flex flex-wrap",
-                isSubmitted && "disabled-thumbnails"
+                isAnalyzing && "disabled-thumbnails"
               )}
             >
               {thumbs}
@@ -107,8 +118,8 @@ export function Dropzone({
         </CardContent>
       </Card>
       {files.length > 0 && (
-        <Button className="w-24 " onClick={submitHandler}>
-          {isSubmitted ? <Spinner className="w-5 h-5" /> : <span>Analyze</span>}
+        <Button className="w-24 " onClick={() => submitHandler(files)}>
+          {isAnalyzing ? <Spinner className="w-5 h-5" /> : <span>Analyze</span>}
         </Button>
       )}
     </>
