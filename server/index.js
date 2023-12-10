@@ -206,7 +206,7 @@ app.get("/api/nutritionData", async (req, res) => {
 
   console.log(foodData);
 
-  res.json(foodItems);
+  res.json(foodData);
 });
 
 // GET request for gpt vision api call
