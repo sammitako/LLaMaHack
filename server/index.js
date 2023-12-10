@@ -57,6 +57,23 @@ app.get("/api/items/:id", (req, res) => {
   }
 });
 
+// gpt-4-32k-0314
+
+const getSuggestionFromGPT4 = async (foodList) => {
+  const completion = await openai.chat.completions.create({
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      {
+        role: "user",
+        content: "Please tell me why do we need quadratic formula",
+      },
+    ],
+    model: "gpt-4",
+  });
+
+  console.log(completion.choices[0]);
+};
+
 const getIngredientsFromGPT4 = async (url, asList) => {
   const response = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",
@@ -66,7 +83,7 @@ const getIngredientsFromGPT4 = async (url, asList) => {
         content: [
           {
             type: "text",
-            text: "Please analyze the attached image of a food dish. Identify all visible food items and their estimated quantities. Provide the results in a list of ingredients with measurements in imperial units, using common kitchen measures like cups, ounces, tablespoons, etc. For example, '1 cup rice, 10 oz chickpeas'. Provide a best-guess estimate if exact measurements are not possible. Assume standard serving sizes for each food item.don't provide any text beyond the ingredients that are present in the image. Also don't provide information such as cubed, sliced, halved etc.",
+            text: "Please analyze the attached image of a food dish. Identify all visible food items and their estimated quantities. Provide the results in a list of ingredients with measurements in imperial units, using common kitchen measures like cups, ounces, tablespoons, etc. For example, '1 cup rice, 10 oz chickpeas'. Provide a best-guess estimate if exact measurements are not possible. Assume standard serving sizes for each food item.don't provide any text beyond the ingredients that are present in the image. Also don't provide information such as cubed, sliced, halved etc. I strictly want the result in the above specified format. I am telling you again, stick with the format.",
           },
           {
             type: "image_url",
@@ -129,12 +146,54 @@ const getNutritionDataIndividually = async (foodItems) => {
   return summary;
 };
 
+const getSuggestion = async (foodItems) => {
+  // console.log(
+  //   `I am 20 year old women and I just consumed ${foodItems.join(
+  //     ","
+  //   )}. Suggest me what to supplement more or anything that I miss to meet the daily intake for my profile. Give me just items and units like grams per items based on my profile and what I had today.\n\nCan you give me suggested nutritions as title and the Example food should be divided by those nutritions as title and specific food that we can eat with specific units (grams, cups, etc). That is, I do want these format -> Protein: meats(100g), fish(100g), etc`
+  // );
+  axios
+    .post(
+      "https://api.together.xyz/inference",
+      {
+        model: "mistralai/Mistral-7B-v0.1",
+        max_tokens: 512,
+        prompt:
+          "I am 20 year old women and I just consumed 1 cup rice,10 oz chickpeas, 2 cup green tea. Suggest me what to supplement more or anything that I miss to meet the daily intake for my profile. Give me just items and units like grams per items based on my profile and what I had today. Can you give me suggested nutritions as title and the Example food should be divided by those nutritions as title and specific food that we can eat with specific units (grams, cups, etc). That is, I do want these format -> Protein: meats(100g), fish(100g), etc. Don't write anything extra",
+        temperature: 2,
+        top_p: 0.7,
+        top_k: 50,
+        repetition_penalty: 1,
+        stream_tokens: false,
+        stop: ["</s>", "[INST]"],
+        negative_prompt: "",
+        sessionKey: "353f87d3a237d33a540803f82328af73bc0e243f",
+        repetitive_penalty: 1,
+        update_at: "2023-12-10T17:51:14.651Z",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TOGETHER_AI_API_KEY}`,
+        },
+      }
+    )
+    .then(
+      (response) => {
+        console.log(response.data.output);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+};
+
 const getNutritionData = async (foodItems) => {
   const selectedFields = [
     "calories",
     "dietLabels",
     "totalDaily",
     "totalNutrientsKCal",
+    "totalNutrients",
   ];
 
   const requestURL =
@@ -216,21 +275,31 @@ app.get("/api/evaluateImage", async (req, res) => {
 
   console.log("eval image");
 
-  // let foodItems = await getIngredientsFromGPT4(
-  //   "https://www.asavoryfeast.com/wp-content/uploads/2014/07/CC-Burgers-5-735x490.jpg",
-  //   true
-  // );
+  let foodItems = await getIngredientsFromGPT4(
+    "https://www.thefieryvegetarian.com/wp-content/uploads/2023/01/vegetarian-rasta-pasta-recipe-720x720.jpg",
+    true
+  );
+
+  foodItems = foodItems.split("\n");
+
+  foodItems = foodItems.map((line) => line.replace(/^-/, "").trim());
+
+  // getSuggestion(foodItems);
+  getSuggestionFromGPT4(foodItems);
 
   // foodItems = foodItems.replace(/\n/g, "").split("- ").filter(Boolean);
 
-  let foodItems = [
-    "1 hamburger bun",
-    "6 oz ground beef patty",
-    "1 oz cheddar cheese",
-    "1 tablespoon mayonnaise",
-    "1 oz cooked bacon",
-    "1/4 cup fresh spinach leaves",
-  ];
+  console.log("Food Items:");
+  console.log(foodItems);
+
+  // let foodItems = [
+  //   "1 hamburger bun",
+  //   "6 oz ground beef patty",
+  //   "1 oz cheddar cheese",
+  //   "1 tablespoon mayonnaise",
+  //   "1 oz cooked bacon",
+  //   "1/4 cup fresh spinach leaves",
+  // ];
 
   const nutritionData = await getNutritionData(foodItems);
 
