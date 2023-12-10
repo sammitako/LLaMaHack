@@ -1,6 +1,6 @@
 import { Separator } from "./ui/separator";
 
-export function RecentSales() {
+export function NutritionFacts() {
   return (
     <div className="space-y-2 text-left">
       <div className="flex items-center">

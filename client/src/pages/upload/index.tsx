@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 // import { CalendarDateRangePicker } from "@/components/date-range-picker";
-import { RecentSales } from "@/components/recent-sales";
+import { NutritionFacts } from "@/components/nutrition-facts";
 import { Dropzone } from "@/components/drop-zone";
 import { useState } from "react";
 import ConsumptionTable from "@/components/consumption-table";
@@ -98,7 +98,7 @@ const Upload = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <RecentSales />
+                  <NutritionFacts />
                 </CardContent>
               </Card>
             </div>
